@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Phone Matcher</title>
+  
+  <!-- Σύνδεση με το PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="PhoneMatcher">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    input[type=range] {
+      touch-action: manipulation;
+      accent-color: #3b82f6;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen pb-12 antialiased">
+
+  <!-- Κεφαλίδα -->
+  <header class="bg-slate-800 border-b border-slate-700 py-4 px-4 sticky top-0 z-20 shadow-md">
+    <div class="max-w-md mx-auto text-center">
+      <h1 class="text-xl font-bold text-blue-400">📱 Phone Matcher</h1>
+      <p class="text-xs text-slate-400">Ρύθμισε τις 10 μπάρες ανάλογα με τις ανάγκες σου</p>
+    </div>
+  </header>
+
+  <main class="max-w-md mx-auto p-4 space-y-6">
+
+    <!-- Ενότητα Sliders -->
+    <section class="bg-slate-800 p-4 rounded-2xl border border-slate-700 space-y-4 shadow-sm">
+      <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-2">Χαρακτηριστικά (1 έως 10)</h2>
+      
+      <div id="slidersContainer" class="space-y-3">
+        <!-- Δημιουργούνται αυτόματα από τη JS -->
+      </div>
+
+      <button id="calculateBtn" class="w-full mt-4 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl text-sm transition shadow-lg shadow-blue-500/30">
+        Βρες το Ιδανικό Κινητό 🔍
+      </button>
+    </section>
+
+    <!-- Αποτελέσματα -->
+    <section id="resultsSection" class="hidden space-y-4">
+      <h2 class="text-base font-bold text-slate-200">Η Καλύτερη Επιλογή για Εσένα:</h2>
+      
+      <div id="bestMatchCard" class="bg-gradient-to-br from-blue-950/60 to-slate-800 p-5 rounded-2xl border-2 border-blue-500 shadow-xl">
+        <!-- Καλύτερο Match -->
+      </div>
+
+      <h3 class="text-sm font-semibold text-slate-400 pt-2">Εναλλακτικές Προτάσεις:</h3>
+      <div id="runnerUpsContainer" class="space-y-3">
+        <!-- Επιλαχόντες -->
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // 1. Εγγραφή Service Worker για λειτουργία PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => console.log('Service Worker ενεργός:', reg.scope))
+          .catch((err) => console.error('Σφάλμα Service Worker:', err));
+      });
+    }
+
+    // 2. Ορισμός των 10 Κριτηρίων
+    const FEATURES = [
+      { id: "budget", name: "Budget / Τιμή", desc: "1 = Οικονομικό, 10 = Flagship" },
+      { id: "camera", name: "Κάμερα & Φωτογραφία", desc: "Καθαρές λήψεις ημέρα και νύχτα" },
+      { id: "video", name: "Βίντεο & Social Media", desc: "Σταθεροποίηση 4K και vlogging" },
+      { id: "performance", name: "Gaming & Επιδόσεις", desc: "Επεξεργαστής και γρήγορη RAM" },
+      { id: "battery", name: "Αυτονομία Μπαταρίας", desc: "Διάρκεια πάνω από μία ημέρα" },
+      { id: "charging", name: "Ταχύτητα Φόρτισης", desc: "Γρήγορη φόρτιση (W)" },
+      { id: "display", name: "Ποιότητα Οθόνης", desc: "OLED / 120Hz ρυθμός ανανέωσης" },
+      { id: "build", name: "Ποιότητα Κατασκευής", desc: "Αντοχή σε νερό (IP68) και πτώσεις" },
+      { id: "software", name: "Υποστήριξη Λογισμικού", desc: "Χρόνια αναβαθμίσεων συστήματος" },
+      { id: "compact", name: "Μικρό Μέγεθος", desc: "1 = Μεγάλη οθόνη, 10 = Compact μέγεθος" }
+    ];
+
+    // 3. Βάση Δεδομένων Κινητών
+    const PHONES = [
+      {
+        name: "Apple iPhone 16 Pro",
+        brand: "Apple",
+        price: "€1.239",
+        os: "iOS",
+        scores: { budget: 10, camera: 10, video: 10, performance: 10, battery: 8, charging: 6, display: 9, build: 10, software: 10, compact: 7 }
+      },
+      {
+        name: "Samsung Galaxy S24 Ultra",
+        brand: "Samsung",
+        price: "€1.199",
+        os: "Android",
+        scores: { budget: 10, camera: 10, video: 9, performance: 10, battery: 9, charging: 7, display: 10, build: 10, software: 10, compact: 2 }
+      },
+      {
+        name: "Xiaomi 14T Pro",
+        brand: "Xiaomi",
+        price: "€699",
+        os: "Android",
+        scores: { budget: 7, camera: 8, video: 8, performance: 9, battery: 8, charging: 10, display: 9, build: 8, software: 7, compact: 4 }
+      },
+      {
+        name: "Google Pixel 8a",
+        brand: "Google",
+        price: "€499",
+        os: "Android",
+        scores: { budget: 5, camera: 9, video: 8, performance: 7, battery: 7, charging: 4, display: 8, build: 7, software: 10, compact: 8 }
+      },
+      {
+        name: "Poco X6 Pro",
+        brand: "Xiaomi",
+        price: "€319",
+        os: "Android",
+        scores: { budget: 3, camera: 6, video: 5, performance: 9, battery: 8, charging: 9, display: 8, build: 6, software: 6, compact: 4 }
+      },
+      {
+        name: "Redmi Note 13 4G",
+        brand: "Xiaomi",
+        price: "€179",
+        os: "Android",
+        scores: { budget: 1, camera: 5, video: 4, performance: 4, battery: 9, charging: 6, display: 7, build: 5, software: 5, compact: 4 }
+      }
+    ];
+
+    // 4. Δημιουργία Sliders
+    const slidersContainer = document.getElementById("slidersContainer");
+
+    FEATURES.forEach(feature => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "space-y-1 bg-slate-700/40 p-2.5 rounded-xl border border-slate-700/50";
+      wrapper.innerHTML = `
+        <div class="flex justify-between items-center text-xs">
+          <label for="${feature.id}" class="font-medium text-slate-200">${feature.name}</label>
+          <span id="${feature.id}_val" class="font-bold text-blue-400 bg-slate-800 px-2 py-0.5 rounded border border-slate-600">5</span>
+        </div>
+        <p class="text-[10px] text-slate-400">${feature.desc}</p>
+        <input type="range" id="${feature.id}" min="1" max="10" value="5" class="w-full h-1.5 bg-slate-600 rounded-lg cursor-pointer">
+      `;
+      slidersContainer.appendChild(wrapper);
+
+      const slider = wrapper.querySelector(`#${feature.id}`);
+      const valBadge = wrapper.querySelector(`#${feature.id}_val`);
+      slider.addEventListener("input", () => {
+        valBadge.textContent = slider.value;
+      });
+    });
+
+    // 5. Αλγόριθμος Υπολογισμού Συμβατότητας
+    function calculateBestMatches() {
+      const userProfile = {};
+      FEATURES.forEach(f => {
+        userProfile[f.id] = parseInt(document.getElementById(f.id).value);
+      });
+
+      const scoredPhones = PHONES.map(phone => {
+        let sumSquaredDiffs = 0;
+
+        FEATURES.forEach(f => {
+          const userVal = userProfile[f.id];
+          const phoneVal = phone.scores[f.id];
+          sumSquaredDiffs += Math.pow(userVal - phoneVal, 2);
+        });
+
+        const distance = Math.sqrt(sumSquaredDiffs);
+        const maxDistance = 28.5; // Μέγιστη θεωρητική απόσταση: sqrt(10 * 81)
+        const matchPercentage = Math.max(0, Math.round((1 - (distance / maxDistance)) * 100));
+
+        return {
+          ...phone,
+          matchPercentage: matchPercentage
+        };
+      });
+
+      scoredPhones.sort((a, b) => b.matchPercentage - a.matchPercentage);
+      displayResults(scoredPhones);
+    }
+
+    // 6. Εμφάνιση Αποτελεσμάτων
+    function displayResults(matches) {
+      const resultsSection = document.getElementById("resultsSection");
+      const bestMatchCard = document.getElementById("bestMatchCard");
+      const runnerUpsContainer = document.getElementById("runnerUpsContainer");
+
+      resultsSection.classList.remove("hidden");
+
+      const topMatch = matches[0];
+      bestMatchCard.innerHTML = `
+        <div class="flex justify-between items-start mb-2">
+          <div>
+            <span class="text-[11px] font-bold tracking-wider uppercase text-blue-400 bg-blue-900/60 px-2 py-0.5 rounded-full">Top Επιλογή</span>
+            <h3 class="text-xl font-bold text-white mt-1">${topMatch.name}</h3>
+            <p class="text-xs text-slate-300 font-medium">${topMatch.brand} • ${topMatch.os}</p>
+          </div>
+          <div class="text-right">
+            <span class="text-2xl font-black text-emerald-400">${topMatch.matchPercentage}%</span>
+            <span class="block text-[10px] text-slate-400">Συμβατότητα</span>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-slate-700/60 flex justify-between items-center text-sm">
+          <span class="text-slate-300">Εκτιμώμενη Τιμή:</span>
+          <span class="font-extrabold text-blue-300 text-base">${topMatch.price}</span>
+        </div>
+      `;
+
+      runnerUpsContainer.innerHTML = "";
+      matches.slice(1, 3).forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "bg-slate-800 p-3.5 rounded-xl border border-slate-700 flex justify-between items-center";
+        div.innerHTML = `
+          <div>
+            <div class="font-bold text-sm text-slate-200">#${index + 2} ${item.name}</div>
+            <div class="text-xs text-slate-400">${item.price} • ${item.brand}</div>
+          </div>
+          <div class="text-right">
+            <span class="font-bold text-blue-400 text-sm">${item.matchPercentage}%</span>
+            <span class="block text-[9px] text-slate-500">Match</span>
+          </div>
+        `;
+        runnerUpsContainer.appendChild(div);
+      });
+
+      resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    document.getElementById("calculateBtn").addEventListener("click", calculateBestMatches);
+  </script>
+</body>
+</html>
