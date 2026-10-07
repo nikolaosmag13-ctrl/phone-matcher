@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Phone Matcher</title>
+  <title>Xiaomi Phone Matcher</title>
   
-  <!-- Σύνδεση με το PWA Manifest -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#2563eb">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,11 +21,11 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen pb-12 antialiased">
 
-  <!-- Κεφαλίδα -->
+  <!-- Κεφαλίδα Εφαρμογής -->
   <header class="bg-slate-800 border-b border-slate-700 py-4 px-4 sticky top-0 z-20 shadow-md">
     <div class="max-w-md mx-auto text-center">
-      <h1 class="text-xl font-bold text-blue-400">📱 Phone Matcher</h1>
-      <p class="text-xs text-slate-400">Ρύθμισε τις 10 μπάρες ανάλογα με τις ανάγκες σου</p>
+      <h1 class="text-xl font-bold text-blue-400">📱 Xiaomi Matcher</h1>
+      <p class="text-xs text-slate-400">Βρες το ιδανικό Xiaomi / Poco / Redmi για εσένα</p>
     </div>
   </header>
 
@@ -34,11 +33,9 @@
 
     <!-- Ενότητα Sliders -->
     <section class="bg-slate-800 p-4 rounded-2xl border border-slate-700 space-y-4 shadow-sm">
-      <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-2">Χαρακτηριστικά (1 έως 10)</h2>
+      <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-2">Ρύθμισε τις Ανάγκες σου (1 - 10)</h2>
       
-      <div id="slidersContainer" class="space-y-3">
-        <!-- Δημιουργούνται αυτόματα από τη JS -->
-      </div>
+      <div id="slidersContainer" class="space-y-3"></div>
 
       <button id="calculateBtn" class="w-full mt-4 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl text-sm transition shadow-lg shadow-blue-500/30">
         Βρες το Ιδανικό Κινητό 🔍
@@ -49,20 +46,16 @@
     <section id="resultsSection" class="hidden space-y-4">
       <h2 class="text-base font-bold text-slate-200">Η Καλύτερη Επιλογή για Εσένα:</h2>
       
-      <div id="bestMatchCard" class="bg-gradient-to-br from-blue-950/60 to-slate-800 p-5 rounded-2xl border-2 border-blue-500 shadow-xl">
-        <!-- Καλύτερο Match -->
-      </div>
+      <div id="bestMatchCard" class="bg-gradient-to-br from-blue-950/60 to-slate-800 p-5 rounded-2xl border-2 border-blue-500 shadow-xl"></div>
 
       <h3 class="text-sm font-semibold text-slate-400 pt-2">Εναλλακτικές Προτάσεις:</h3>
-      <div id="runnerUpsContainer" class="space-y-3">
-        <!-- Επιλαχόντες -->
-      </div>
+      <div id="runnerUpsContainer" class="space-y-3"></div>
     </section>
 
   </main>
 
   <script>
-    // 1. Εγγραφή Service Worker για λειτουργία PWA
+    // Εγγραφή Service Worker για PWA
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
@@ -71,67 +64,195 @@
       });
     }
 
-    // 2. Ορισμός των 10 Κριτηρίων
+    // Ορισμός των 10 Κριτηρίων
     const FEATURES = [
-      { id: "budget", name: "Budget / Τιμή", desc: "1 = Οικονομικό, 10 = Flagship" },
-      { id: "camera", name: "Κάμερα & Φωτογραφία", desc: "Καθαρές λήψεις ημέρα και νύχτα" },
-      { id: "video", name: "Βίντεο & Social Media", desc: "Σταθεροποίηση 4K και vlogging" },
-      { id: "performance", name: "Gaming & Επιδόσεις", desc: "Επεξεργαστής και γρήγορη RAM" },
-      { id: "battery", name: "Αυτονομία Μπαταρίας", desc: "Διάρκεια πάνω από μία ημέρα" },
-      { id: "charging", name: "Ταχύτητα Φόρτισης", desc: "Γρήγορη φόρτιση (W)" },
-      { id: "display", name: "Ποιότητα Οθόνης", desc: "OLED / 120Hz ρυθμός ανανέωσης" },
-      { id: "build", name: "Ποιότητα Κατασκευής", desc: "Αντοχή σε νερό (IP68) και πτώσεις" },
-      { id: "software", name: "Υποστήριξη Λογισμικού", desc: "Χρόνια αναβαθμίσεων συστήματος" },
-      { id: "compact", name: "Μικρό Μέγεθος", desc: "1 = Μεγάλη οθόνη, 10 = Compact μέγεθος" }
+      { id: "budget", name: "Budget / Τιμή", desc: "1 = Οικονομικό (<150€), 10 = Ultra Flagship (>1000€)" },
+      { id: "camera", name: "Κάμερα & Φωτογραφία", desc: "Καθαρές λήψεις ημέρα/νύχτα, φακοί Leica" },
+      { id: "video", name: "Βίντεο & Social Media", desc: "4K/8K σταθεροποίηση & vlogging" },
+      { id: "performance", name: "Gaming & Επιδόσεις", desc: "Snapdragon 8 / Dimensity & ταχεία RAM" },
+      { id: "battery", name: "Αυτονομία Μπαταρίας", desc: "Διάρκεια 5000mAh+ για όλη την ημέρα" },
+      { id: "charging", name: "Ταχύτητα Φόρτισης", desc: "Ταχεία φόρτιση 67W, 90W ή 120W" },
+      { id: "display", name: "Ποιότητα Οθόνης", desc: "AMOLED 120Hz / 144Hz υψηλής φωτεινότητας" },
+      { id: "build", name: "Ποιότητα Κατασκευής", desc: "Αδιαβροχοποίηση (IP68) & υλικά premium" },
+      { id: "software", name: "Υποστήριξη HyperOS", desc: "Χρόνια ενημερώσεων λειτουργικού συστήματος" },
+      { id: "compact", name: "Μικρό Μέγεθος", desc: "1 = Μεγάλο phablet, 10 = Compact στο χέρι" }
     ];
 
-    // 3. Βάση Δεδομένων Κινητών
+    // Πλήρης Βάση Δεδομένων Κινητών Xiaomi (Xiaomi, Poco, Redmi τελευταίων 3 ετών)
     const PHONES = [
+      // --- XIAOMI FLAGSHIP SERIES ---
       {
-        name: "Apple iPhone 16 Pro",
-        brand: "Apple",
-        price: "€1.239",
-        os: "iOS",
-        scores: { budget: 10, camera: 10, video: 10, performance: 10, battery: 8, charging: 6, display: 9, build: 10, software: 10, compact: 7 }
+        name: "Xiaomi 15 Pro",
+        brand: "Xiaomi",
+        price: "€1.050",
+        os: "HyperOS 2 (Android)",
+        scores: { budget: 9, camera: 10, video: 10, performance: 10, battery: 9, charging: 9, display: 10, build: 10, software: 10, compact: 3 }
       },
       {
-        name: "Samsung Galaxy S24 Ultra",
-        brand: "Samsung",
-        price: "€1.199",
-        os: "Android",
-        scores: { budget: 10, camera: 10, video: 9, performance: 10, battery: 9, charging: 7, display: 10, build: 10, software: 10, compact: 2 }
+        name: "Xiaomi 15",
+        brand: "Xiaomi",
+        price: "€850",
+        os: "HyperOS 2 (Android)",
+        scores: { budget: 8, camera: 9, video: 9, performance: 10, battery: 8, charging: 9, display: 9, build: 10, software: 10, compact: 8 }
       },
+      {
+        name: "Xiaomi 14 Ultra",
+        brand: "Xiaomi",
+        price: "€1.299",
+        os: "HyperOS (Android)",
+        scores: { budget: 10, camera: 10, video: 10, performance: 10, battery: 8, charging: 9, display: 10, build: 10, software: 9, compact: 2 }
+      },
+      {
+        name: "Xiaomi 14",
+        brand: "Xiaomi",
+        price: "€799",
+        os: "HyperOS (Android)",
+        scores: { budget: 7, camera: 9, video: 9, performance: 10, battery: 8, charging: 9, display: 9, build: 9, software: 9, compact: 8 }
+      },
+      {
+        name: "Xiaomi 13 Ultra",
+        brand: "Xiaomi",
+        price: "€999",
+        os: "HyperOS (Android)",
+        scores: { budget: 9, camera: 10, video: 9, performance: 9, battery: 8, charging: 9, display: 10, build: 10, software: 8, compact: 2 }
+      },
+      {
+        name: "Xiaomi 13 Pro",
+        brand: "Xiaomi",
+        price: "€750",
+        os: "HyperOS (Android)",
+        scores: { budget: 7, camera: 9, video: 9, performance: 9, battery: 8, charging: 10, display: 9, build: 9, software: 8, compact: 3 }
+      },
+      {
+        name: "Xiaomi 13",
+        brand: "Xiaomi",
+        price: "€550",
+        os: "HyperOS (Android)",
+        scores: { budget: 6, camera: 8, video: 8, performance: 9, battery: 7, charging: 7, display: 8, build: 9, software: 8, compact: 8 }
+      },
+
+      // --- XIAOMI T SERIES (FLAGSHIP KILLERS) ---
       {
         name: "Xiaomi 14T Pro",
         brand: "Xiaomi",
         price: "€699",
-        os: "Android",
-        scores: { budget: 7, camera: 8, video: 8, performance: 9, battery: 8, charging: 10, display: 9, build: 8, software: 7, compact: 4 }
+        os: "HyperOS (Android)",
+        scores: { budget: 7, camera: 8, video: 8, performance: 9, battery: 8, charging: 10, display: 9, build: 8, software: 8, compact: 4 }
       },
       {
-        name: "Google Pixel 8a",
-        brand: "Google",
+        name: "Xiaomi 14T",
+        brand: "Xiaomi",
         price: "€499",
-        os: "Android",
-        scores: { budget: 5, camera: 9, video: 8, performance: 7, battery: 7, charging: 4, display: 8, build: 7, software: 10, compact: 8 }
+        os: "HyperOS (Android)",
+        scores: { budget: 5, camera: 8, video: 7, performance: 8, battery: 8, charging: 7, display: 9, build: 8, software: 8, compact: 4 }
+      },
+      {
+        name: "Xiaomi 13T Pro",
+        brand: "Xiaomi",
+        price: "€480",
+        os: "HyperOS (Android)",
+        scores: { budget: 5, camera: 8, video: 8, performance: 9, battery: 8, charging: 10, display: 9, build: 8, software: 7, compact: 4 }
+      },
+      {
+        name: "Xiaomi 13T",
+        brand: "Xiaomi",
+        price: "€380",
+        os: "HyperOS (Android)",
+        scores: { budget: 4, camera: 7, video: 7, performance: 7, battery: 8, charging: 7, display: 8, build: 8, software: 7, compact: 4 }
+      },
+
+      // --- POCO PERFORMANCE SERIES ---
+      {
+        name: "Poco F6 Pro",
+        brand: "Poco (Xiaomi)",
+        price: "€479",
+        os: "HyperOS (Android)",
+        scores: { budget: 5, camera: 7, video: 7, performance: 10, battery: 8, charging: 10, display: 9, build: 7, software: 7, compact: 3 }
+      },
+      {
+        name: "Poco F6",
+        brand: "Poco (Xiaomi)",
+        price: "€369",
+        os: "HyperOS (Android)",
+        scores: { budget: 4, camera: 6, video: 6, performance: 9, battery: 8, charging: 9, display: 8, build: 6, software: 7, compact: 5 }
       },
       {
         name: "Poco X6 Pro",
-        brand: "Xiaomi",
-        price: "€319",
-        os: "Android",
-        scores: { budget: 3, camera: 6, video: 5, performance: 9, battery: 8, charging: 9, display: 8, build: 6, software: 6, compact: 4 }
+        brand: "Poco (Xiaomi)",
+        price: "€299",
+        os: "HyperOS (Android)",
+        scores: { budget: 3, camera: 6, video: 5, performance: 9, battery: 8, charging: 7, display: 8, build: 6, software: 7, compact: 4 }
+      },
+      {
+        name: "Poco X6",
+        brand: "Poco (Xiaomi)",
+        price: "€229",
+        os: "HyperOS (Android)",
+        scores: { budget: 2, camera: 5, video: 5, performance: 6, battery: 8, charging: 7, display: 8, build: 5, software: 6, compact: 4 }
+      },
+      {
+        name: "Poco F5",
+        brand: "Poco (Xiaomi)",
+        price: "€280",
+        os: "HyperOS (Android)",
+        scores: { budget: 3, camera: 6, video: 5, performance: 8, battery: 8, charging: 7, display: 8, build: 5, software: 6, compact: 5 }
+      },
+
+      // --- REDMI NOTE SERIES (VALUE FOR MONEY) ---
+      {
+        name: "Redmi Note 14 Pro+ 5G",
+        brand: "Redmi (Xiaomi)",
+        price: "€389",
+        os: "HyperOS (Android)",
+        scores: { budget: 4, camera: 8, video: 7, performance: 7, battery: 9, charging: 9, display: 8, build: 8, software: 7, compact: 3 }
+      },
+      {
+        name: "Redmi Note 13 Pro+ 5G",
+        brand: "Redmi (Xiaomi)",
+        price: "€349",
+        os: "HyperOS (Android)",
+        scores: { budget: 4, camera: 8, video: 7, performance: 7, battery: 8, charging: 10, display: 8, build: 8, software: 6, compact: 3 }
+      },
+      {
+        name: "Redmi Note 13 Pro 5G",
+        brand: "Redmi (Xiaomi)",
+        price: "€279",
+        os: "HyperOS (Android)",
+        scores: { budget: 3, camera: 7, video: 6, performance: 6, battery: 8, charging: 7, display: 8, build: 6, software: 6, compact: 4 }
       },
       {
         name: "Redmi Note 13 4G",
-        brand: "Xiaomi",
-        price: "€179",
-        os: "Android",
-        scores: { budget: 1, camera: 5, video: 4, performance: 4, battery: 9, charging: 6, display: 7, build: 5, software: 5, compact: 4 }
+        brand: "Redmi (Xiaomi)",
+        price: "€169",
+        os: "HyperOS (Android)",
+        scores: { budget: 2, camera: 5, video: 4, performance: 4, battery: 8, charging: 4, display: 7, build: 5, software: 5, compact: 4 }
+      },
+      {
+        name: "Redmi Note 12 Pro 5G",
+        brand: "Redmi (Xiaomi)",
+        price: "€199",
+        os: "HyperOS (Android)",
+        scores: { budget: 2, camera: 6, video: 5, performance: 5, battery: 8, charging: 7, display: 7, build: 5, software: 5, compact: 4 }
+      },
+
+      // --- REDMI ENTRY LEVEL ---
+      {
+        name: "Redmi 13C / 14C",
+        brand: "Redmi (Xiaomi)",
+        price: "€119",
+        os: "HyperOS (Android)",
+        scores: { budget: 1, camera: 3, video: 3, performance: 3, battery: 9, charging: 2, display: 5, build: 4, software: 4, compact: 2 }
+      },
+      {
+        name: "Redmi A3",
+        brand: "Redmi (Xiaomi)",
+        price: "€89",
+        os: "Android Go",
+        scores: { budget: 1, camera: 2, video: 2, performance: 2, battery: 8, charging: 1, display: 4, build: 4, software: 3, compact: 2 }
       }
     ];
 
-    // 4. Δημιουργία Sliders
+    // Δημιουργία Sliders στο DOM
     const slidersContainer = document.getElementById("slidersContainer");
 
     FEATURES.forEach(feature => {
@@ -154,7 +275,7 @@
       });
     });
 
-    // 5. Αλγόριθμος Υπολογισμού Συμβατότητας
+    // Αλγόριθμος Υπολογισμού Συμβατότητας (Weighted Euclidean Distance)
     function calculateBestMatches() {
       const userProfile = {};
       FEATURES.forEach(f => {
@@ -171,7 +292,7 @@
         });
 
         const distance = Math.sqrt(sumSquaredDiffs);
-        const maxDistance = 28.5; // Μέγιστη θεωρητική απόσταση: sqrt(10 * 81)
+        const maxDistance = 28.5; // sqrt(10 * 81)
         const matchPercentage = Math.max(0, Math.round((1 - (distance / maxDistance)) * 100));
 
         return {
@@ -184,7 +305,7 @@
       displayResults(scoredPhones);
     }
 
-    // 6. Εμφάνιση Αποτελεσμάτων
+    // Εμφάνιση Αποτελεσμάτων στο UI
     function displayResults(matches) {
       const resultsSection = document.getElementById("resultsSection");
       const bestMatchCard = document.getElementById("bestMatchCard");
@@ -206,13 +327,13 @@
           </div>
         </div>
         <div class="mt-4 pt-3 border-t border-slate-700/60 flex justify-between items-center text-sm">
-          <span class="text-slate-300">Εκτιμώμενη Τιμή:</span>
+          <span class="text-slate-300">Εκτιμώμενη Τιμή Αγοράς:</span>
           <span class="font-extrabold text-blue-300 text-base">${topMatch.price}</span>
         </div>
       `;
 
       runnerUpsContainer.innerHTML = "";
-      matches.slice(1, 3).forEach((item, index) => {
+      matches.slice(1, 4).forEach((item, index) => {
         const div = document.createElement("div");
         div.className = "bg-slate-800 p-3.5 rounded-xl border border-slate-700 flex justify-between items-center";
         div.innerHTML = `
