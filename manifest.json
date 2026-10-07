@@ -1,17 +1,17 @@
 {
-  "id": "/phone-matcher/",
+  "id": "phone-matcher-unique-app-v1",
   "name": "Xiaomi Phone Matcher",
-  "short_name": "PhoneMatcher",
+  "short_name": "XiaomiMatcher",
   "description": "Βρες το ιδανικό Xiaomi για εσένα",
-  "start_url": "/phone-matcher/index.html",
-  "scope": "/phone-matcher/",
+  "start_url": "https://nikolaosmag13-ctrl.github.io/phone-matcher/",
+  "scope": "https://nikolaosmag13-ctrl.github.io/phone-matcher/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#2563eb",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/phone-matcher/icon512.png",
+      "src": "https://nikolaosmag13-ctrl.github.io/phone-matcher/icon512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
