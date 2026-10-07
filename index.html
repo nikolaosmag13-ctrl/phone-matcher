@@ -55,14 +55,17 @@
   </main>
 
   <script>
-    // Εγγραφή Service Worker για PWA
+    // Εγγραφή Service Worker με απόλυτο scope για το phone-matcher
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then((reg) => console.log('Service Worker ενεργός:', reg.scope))
-          .catch((err) => console.error('Σφάλμα Service Worker:', err));
+        navigator.serviceWorker.register('https://nikolaosmag13-ctrl.github.io/phone-matcher/sw.js', {
+          scope: 'https://nikolaosmag13-ctrl.github.io/phone-matcher/'
+        })
+        .then((reg) => console.log('Phone Matcher SW ενεργός:', reg.scope))
+        .catch((err) => console.error('Σφάλμα Phone Matcher SW:', err));
       });
     }
+    
 
     // Ορισμός των 10 Κριτηρίων
     const FEATURES = [
